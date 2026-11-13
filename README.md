@@ -1,13 +1,13 @@
-# 🎒 Backpack
+# Backpack
 
 **The study buddy that remembers your homework.**
 
 Built for the NXT Build Sprint for a friend who can't keep track of homework, studying, and time.
 
-- 📸 Snap or paste homework. AI pulls out what's due, when, and what it covers.
-- 🏠 **Today** shows tonight's plan, what's coming up, and a countdown to the next test.
-- 🎯 **Tests** gives a day-by-day study plan up to test day.
-- 🧠 **Practice quizzes are built from your own saved homework.** Each answer shows which homework it came from.
+- Snap or paste homework. AI pulls out what's due, when, and what it covers.
+- **Today** shows tonight's plan, what's coming up, and a countdown to the next test.
+- **Tests** gives a day-by-day study plan up to test day.
+- **Practice quizzes are built from your own saved homework.** Each answer shows which homework it came from.
 
 ## How it works
 
