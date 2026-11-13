@@ -1,0 +1,6 @@
+{
+  "name": "backpack",
+  "private": true,
+  "type": "module",
+  "description": "Backpack: the study buddy that remembers your homework"
+}
