@@ -66,7 +66,51 @@ function parseJSON(text) {
   return JSON.parse(m[0]);
 }
 
-async function callClaude(content, maxTokens) {
+// JSON schemas for structured outputs: the API guarantees the reply matches these,
+// so a stray quote inside a question can't break the JSON anymore.
+const str = { type: "string" };
+const strList = { type: "array", items: str };
+const EXTRACT_SCHEMA = {
+  type: "object",
+  properties: {
+    items: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          kind: { type: "string", enum: ["hw", "test", "quiz", "project"] },
+          title: str,
+          subject: str,
+          due: { anyOf: [str, { type: "null" }] },
+          topics: strList,
+          notes: str,
+        },
+        required: ["kind", "title", "subject", "due", "topics", "notes"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["items"],
+  additionalProperties: false,
+};
+const QUIZ_SCHEMA = {
+  type: "object",
+  properties: {
+    questions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { q: str, options: strList, answer: { type: "integer" }, topic: str, from: str, explain: str },
+        required: ["q", "options", "answer", "topic", "from", "explain"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["questions"],
+  additionalProperties: false,
+};
+
+async function callClaude(content, maxTokens, schema) {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -74,13 +118,20 @@ async function callClaude(content, maxTokens) {
       "x-api-key": process.env.ANTHROPIC_API_KEY,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages: [{ role: "user", content }] }),
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: maxTokens,
+      messages: [{ role: "user", content }],
+      ...(schema ? { output_config: { format: { type: "json_schema", schema } } } : {}),
+    }),
   });
   const data = await r.json().catch(() => ({}));
   if (!r.ok) {
     const msg = (data && data.error && data.error.message) || `AI error ${r.status}`;
     const err = new Error(msg); err.status = r.status; throw err;
   }
+  // A cut-off or declined reply has no complete JSON in it, so fail clearly instead of parsing half an answer.
+  if (data.stop_reason === "max_tokens" || data.stop_reason === "refusal") throw new Error(`ai_${data.stop_reason}`);
   return (data.content || []).filter(b => b.type === "text").map(b => b.text).join("");
 }
 
@@ -120,14 +171,14 @@ export default async function handler(req, res) {
         ...imgs.map(i => ({ type: "image", source: { type: "base64", media_type: i.media_type, data: i.data } })),
         { type: "text", text: extractPrompt(text, imgs.length, today, weekday) },
       ];
-      const out = parseJSON(await callClaude(content, 2000));
+      const out = parseJSON(await callClaude(content, 8000, EXTRACT_SCHEMA));
       return send(res, 200, { items: Array.isArray(out.items) ? out.items.slice(0, 12) : [] });
     }
 
     if (body.task === "quiz") {
       const test = body.test || {};
       const related = (Array.isArray(body.related) ? body.related : []).slice(0, 6);
-      const out = parseJSON(await callClaude(quizPrompt(test, related), 3000));
+      const out = parseJSON(await callClaude(quizPrompt(test, related), 8000, QUIZ_SCHEMA));
       return send(res, 200, { questions: Array.isArray(out.questions) ? out.questions.slice(0, 10) : [] });
     }
 

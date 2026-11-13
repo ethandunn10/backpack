@@ -82,8 +82,18 @@
   .tag.date{background:var(--sky)}
 
   .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:0 14px calc(12px + env(safe-area-inset-bottom))}
-  .tabbar .in{max-width:420px;margin:0 auto;display:flex;align-items:center;justify-content:space-around;height:66px;background:var(--card);border:2px solid var(--line);border-radius:999px;box-shadow:0 5px 0 var(--line)}
-  .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;font-weight:600;color:var(--ink-3);cursor:pointer;min-width:72px}
+  .tabbar .in{max-width:460px;margin:0 auto;display:flex;align-items:center;justify-content:space-around;height:66px;background:var(--card);border:2px solid var(--line);border-radius:999px;box-shadow:0 5px 0 var(--line);padding:0 6px}
+  .tab{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12.5px;font-weight:600;color:var(--ink-3);cursor:pointer;min-width:58px;padding:0 2px;white-space:nowrap}
+  .qbtn,.go{font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;background:var(--sun);color:var(--ink);border:2px solid var(--line);border-radius:999px;padding:6px 12px;box-shadow:0 2px 0 var(--line);white-space:nowrap;cursor:pointer;flex:none}
+  .qbtn:active{transform:translateY(2px);box-shadow:0 0 0 var(--line)}
+  .day{font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;color:var(--ink);margin:14px 0 2px;padding-top:10px;border-top:2px solid rgba(18,48,26,.12)}
+  .day:first-of-type{margin-top:0;padding-top:0;border-top:0}
+  .day + .item{border-top:0}
+  .pick{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-top:1.5px dashed rgba(18,48,26,.18);padding:12px 0;cursor:pointer;color:var(--ink)}
+  .pick:first-of-type{border-top:0;padding-top:2px}
+  .pick .pm{flex:1;min-width:0}
+  .pick .pm b{display:block;font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pick .pm span{font-size:13px;color:var(--ink-3)}
   .tab.on{color:var(--ink)}
   .plus{width:58px;height:58px;border-radius:50%;border:2px solid var(--line);background:var(--sun);color:var(--ink);cursor:pointer;margin-top:-30px;box-shadow:0 4px 0 var(--line);display:grid;place-items:center}
   .plus:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
@@ -157,16 +167,18 @@
 <div class="hills" aria-hidden="true"><svg viewBox="0 0 1440 150" preserveAspectRatio="none"><path d="M0,70 C240,20 420,110 720,60 C1000,15 1220,95 1440,50 L1440,150 L0,150 Z" fill="#B8E3A4"/><path d="M0,105 C300,60 520,140 820,95 C1100,55 1280,120 1440,95 L1440,150 L0,150 Z" fill="#8FD07A"/></svg></div>
 <div class="wrap">
   <header>
-    <button class="logo" data-tab="today" aria-label="backpack home">backpack</button>
+    <button class="logo" data-tab="plans" aria-label="backpack home">backpack</button>
     <button class="iconbtn" data-act="settings" aria-label="settings"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h9M18 7h2M4 17h3M12 17h8"/><circle cx="15.5" cy="7" r="2.3"/><circle cx="9.5" cy="17" r="2.3"/></svg></button>
   </header>
   <main id="screen"></main>
 </div>
 
 <nav class="tabbar"><div class="in">
-  <button class="tab on" data-tab="today"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>today</button>
+  <button class="tab on" data-tab="plans"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg>plans</button>
+  <button class="tab" data-tab="homework"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>homework</button>
   <button class="plus" data-act="add" aria-label="add something"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   <button class="tab" data-tab="tests"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>tests</button>
+  <button class="tab" data-tab="quiz"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.8 5.2 5.2 1.8-5.2 1.8L12 17.5l-1.8-5.2L5 10.5l5.2-1.8z"/></svg>quiz me</button>
 </div></nav>
 
 <div id="sheet" class="sheet-bg"><div class="sheet"><div class="grab"></div><div id="sheet-body"></div></div></div>
@@ -181,7 +193,7 @@
 const KEY = "backpack-v2", CODE_KEY = "backpack-code";
 const KINDS = {hw:"Homework", test:"Test", quiz:"Quiz", project:"Project", event:"Date"};
 const COLORS = ["#ff6b35","#3b82f6","#a855f7","#16a34a","#eab308","#ec4899","#14b8a6","#64748b"];
-const S = { items:[], quizzes:{}, tab:"today", photos:[], found:null, quiz:null, showDone:false };
+const S = { items:[], quizzes:{}, tab:"plans", photos:[], found:null, quiz:null, showDone:false, quizAfter:false };
 
 /* ---------- little drawn icons (no emojis) ---------- */
 const P = {
@@ -308,7 +320,7 @@ async function paperSheet(){
   openSheet(`<div class="sheet-head"><h2>example homework page</h2><button class="link" data-act="close">close</button></div>
     <p class="muted" style="margin:0 0 14px">a pretend biology worksheet. tap the button and watch backpack read it, find the due dates, and tuck it away for you.</p>
     <img class="paper" src="${URL.createObjectURL(b)}" alt="example biology worksheet, due Thursday, with a note about a unit 4 test next Tuesday">
-    <button class="btn mt2" data-act="paper-read">${ico("spark", 18)}read this page</button>`);
+    <button class="btn mt2" data-act="paper-read">${ico("spark", 18)}${S.quizAfter ? "read it & quiz me" : "read this page"}</button>`);
 }
 
 /* ---------- planning (instant, no AI) ---------- */
@@ -348,35 +360,81 @@ function tonight(){
 }
 
 /* ---------- screens ---------- */
-function row(i){
+/* mode: "" = date pill on the right, "plan" = no pill (grouped by day already), "hw" = due date in the subtitle + a quiz me button */
+function row(i, mode = ""){
   const w = when(i.due);
   const tag = isTest(i) ? `<span class="tag">${kindWord(i.kind)}</span>` : isDate(i) ? `<span class="tag date">date</span>` : i.kind === "project" ? `<span class="tag">project</span>` : "";
+  const subj = i.subject ? `<span class="dot" style="background:${color(i.subject)}"></span>${esc(i.subject)}` : "";
+  const right = mode === "hw" ? (canQuiz(i) && !i.done ? `<button class="qbtn" data-act="quiz" data-id="${esc(i.id)}">quiz me</button>` : "")
+    : mode === "plan" ? "" : `<div class="when ${i.done?"":w.c}">${i.done?"":esc(w.t)}</div>`;
   return `<div class="item ${i.done?"done":""}" data-id="${esc(i.id)}">
     <button class="chk ${i.done?"on":""}" data-act="toggle" aria-label="done">${i.done ? ico("check", 16, 3.2, "#fff") : ""}</button>
     <div class="main" data-act="edit"><div class="t">${esc(i.title)}</div>
-      <div class="s">${i.subject ? `<span class="dot" style="background:${color(i.subject)}"></span>${esc(i.subject)}` : ""}${tag}</div></div>
-    <div class="when ${i.done?"":w.c}">${i.done?"":esc(w.t)}</div></div>`;
+      <div class="s">${subj}${tag}${mode === "hw" && !i.done ? ` · <span style="${w.c==="hot"?"color:var(--red);font-weight:700":""}">${i.due ? "due " : ""}${esc(w.t)}</span>` : ""}</div></div>
+    ${right}</div>`;
+}
+function dayLabel(s){
+  const n = days(s);
+  if (n === null) return "no date";
+  if (n < 0) return "late";
+  if (n === 0) return "today";
+  if (n === 1) return "tomorrow";
+  if (n < 7) return wk(parse(s)).toLowerCase();
+  return short(parse(s)).toLowerCase();
 }
 const tryCards = () => `<div class="try">
     <button class="tcard" data-act="demo"><span class="ib">${ico("cal", 20)}</span><b>example week</b><span>a pretend week of homework, tests and dates to poke around in</span></button>
     <button class="tcard blue" data-act="paper"><span class="ib">${ico("paper", 20)}</span><b>example homework page</b><span>watch backpack read a worksheet for you</span></button>
   </div>`;
-function today(){
-  if (!S.items.length) return `
+const byDue = (a,b) => (days(a.due)??999) - (days(b.due)??999);
+const hero = () => `
     <h1 class="hello">never forget homework again.</h1>
     <p class="lead">snap a worksheet or type what your teacher said. backpack remembers it, tells you what to do tonight, and makes little practice quizzes from your own homework.</p>
     <button class="btn" data-act="add">${ico("camera", 20)}add homework</button>
     <p class="label mt2">not sure yet? try it out</p>
     ${tryCards()}`;
-  const open = S.items.filter(i => !i.done).sort((a,b) => (days(a.due)??999) - (days(b.due)??999));
-  const done = S.items.filter(i => i.done);
+const demoNote = () => S.items.some(i => i.demo) ? `<div class="card note"><b>this is an example week.</b> check things off, open a test, try a practice quiz. <button class="link" data-act="clear-demo">clear it</button></div>` : "";
+
+function homework(){
+  if (!S.items.length) return hero();
+  const all = S.items.filter(i => !isTest(i) && !isDate(i));
+  const open = all.filter(i => !i.done).sort(byDue), done = all.filter(i => i.done);
+  let html = `<h1 class="hello">your homework</h1>
+    <p class="lead">${open.length ? `${open.length} thing${open.length===1?"":"s"} to do. tap <b>quiz me</b> on anything to practice it.` : "nothing left to do. nice."}</p>${demoNote()}`;
+  html += open.length ? `<div class="card">${open.map(i => row(i, "hw")).join("")}</div>`
+    : `<div class="card empty"><div class="e">${BAG}</div><p class="muted">no homework yet. snap a worksheet or type it in.</p><button class="btn sm" data-act="add-kind" data-kind="hw">add homework</button><div class="mt"><button class="link" data-act="paper">or try the example homework page</button></div></div>`;
+  if (done.length) html += `<div class="center"><button class="link" data-act="show-done">${S.showDone ? "hide" : "show"} finished (${done.length})</button></div>
+    ${S.showDone ? `<div class="card mt">${done.map(i => row(i, "hw")).join("")}<div class="center mt"><button class="link" data-act="clear-done">clear finished</button></div></div>` : ""}`;
+  return html;
+}
+
+function quizTab(){
+  const list = S.items.filter(i => !i.done && canQuiz(i)).sort(byDue);
+  let html = `<h1 class="hello">quiz me</h1>
+    <p class="lead">pick anything you've added and backpack makes a practice quiz from it.</p>`;
+  html += `<div class="card"><p class="label">your stuff</p>${list.length ? list.map(i => {
+      const last = (S.quizzes[i.id]||[]).slice(-1)[0];
+      return `<button class="pick" data-act="quiz" data-id="${esc(i.id)}"><span class="ic">${ico(isTest(i) ? "book" : "pencil", 16)}</span>
+        <span class="pm"><b>${esc(i.title)}</b><span>${esc(i.subject || "")}${i.subject ? " · " : ""}${kindWord(i.kind)} · ${esc(when(i.due).t)}${last ? ` · last ${last.score}/${last.total}` : ""}</span></span>
+        <span class="go">quiz me</span></button>`;
+    }).join("") : `<p class="muted" style="margin:0">nothing added yet. add something below, or try the example week from settings.</p>`}</div>`;
+  html += `<div class="card"><p class="label">or quiz me on something new</p>
+    <p class="muted" style="margin:0 0 4px">snap a worksheet or paste your notes. backpack saves it and quizzes you right away.</p>
+    <button class="btn mt" data-act="quiz-new">${ico("camera", 20)}snap or paste something</button>
+    <button class="btn light mt" data-act="paper" data-quiz="1">${ico("paper", 18)}use the example homework page</button></div>`;
+  return html;
+}
+
+function plans(){
+  if (!S.items.length) return hero();
+  const open = S.items.filter(i => !i.done).sort(byDue);
   const nextTest = open.filter(isTest).find(t => (days(t.due) ?? -1) >= 0);
   const tn = tonight();
   const h = new Date().getHours();
   const wkCount = open.filter(i => { const n = days(i.due); return n !== null && n >= 0 && n <= 7; }).length;
   let html = `<h1 class="hello">${h < 12 ? "good morning." : h < 18 ? "hey there." : "hi, night owl."}</h1>
     <p class="lead">${wkCount ? `${wkCount} thing${wkCount===1?"":"s"} coming up this week. you've got this.` : "nothing due this week. enjoy it."}</p>`;
-  if (S.items.some(i => i.demo)) html += `<div class="card note"><b>this is an example week.</b> check things off, open a test, try a practice quiz. <button class="link" data-act="clear-demo">clear it</button></div>`;
+  html += demoNote();
   if (nextTest) { const n = days(nextTest.due); html += `<div class="card next">
       <p class="label">next test</p>
       <div class="row"><div class="count"><b>${n}</b><span>${n===1?"day":"days"}</span></div>
@@ -385,13 +443,14 @@ function today(){
   html += `<div class="card"><p class="label">tonight</p>${tn.length ? tn.map(x => `<div class="item" data-id="${esc(x.id)}"><div class="ic">${ico(x.ic, 16)}</div>
       <div class="main" data-act="${x.quiz?"quiz":"edit"}"><div class="t" style="white-space:normal">${esc(x.t)}</div><div class="s">${esc(x.s)}</div></div></div>`).join("")
       : `<p class="muted" style="margin:0">nothing urgent tonight. look at you, all caught up.</p>`}</div>`;
-  html += `<div class="card"><p class="label">coming up</p>${open.length ? open.map(row).join("") : `<p class="muted" style="margin:0">all caught up. nice.</p>`}</div>`;
-  if (done.length) html += `<div class="center"><button class="link" data-act="show-done">${S.showDone ? "hide" : "show"} finished (${done.length})</button></div>
-    ${S.showDone ? `<div class="card mt">${done.map(row).join("")}<div class="center mt"><button class="link" data-act="clear-done">clear finished</button></div></div>` : ""}`;
+  let last = null, list = "";
+  for (const i of open) { const l = dayLabel(i.due); if (l !== last) { list += `<div class="day">${esc(l)}</div>`; last = l; } list += row(i, "plan"); }
+  html += `<div class="card"><p class="label">coming up</p>${open.length ? list : `<p class="muted" style="margin:0">all caught up. nice.</p>`}</div>`;
   return html;
 }
 function tests(){
   const list = S.items.filter(isTest).filter(t => !t.done).sort((a,b) => (days(a.due)??999) - (days(b.due)??999));
+  if (!S.items.length) return hero();
   if (!list.length) return `<h1 class="hello">tests</h1><div class="card empty"><div class="e">${BAG}</div><p class="muted">no tests yet. when a teacher announces one, add it and backpack makes you a study plan.</p><button class="btn sm" data-act="add-kind" data-kind="test">add a test</button></div>`;
   return `<h1 class="hello">tests</h1><p class="lead">your study plan, built from your own homework.</p>` + list.map(t => {
     const n = days(t.due), rel = related(t), p = plan(t), last = (S.quizzes[t.id]||[]).slice(-1)[0];
@@ -410,7 +469,7 @@ function tests(){
   }).join("");
 }
 function render(){
-  $("#screen").innerHTML = S.tab === "tests" ? tests() : today();
+  $("#screen").innerHTML = S.tab === "tests" ? tests() : S.tab === "homework" ? homework() : S.tab === "quiz" ? quizTab() : plans();
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === S.tab));
 }
 
@@ -419,20 +478,21 @@ function openSheet(html){ $("#sheet-body").innerHTML = html; $("#sheet").classLi
 function closeSheet(){ $("#sheet").classList.remove("show"); S.quiz = null; S.editing = null; }
 
 function addSheet(err){
-  openSheet(`<div class="sheet-head"><h2>add to your backpack</h2><button class="link" data-act="close">close</button></div>
+  const qm = S.quizAfter;
+  openSheet(`<div class="sheet-head"><h2>${qm ? "quiz me on something new" : "add to your backpack"}</h2><button class="link" data-act="close">close</button></div>
     <label class="drop" for="file">${ico("camera", 30, 2)}<b>snap or upload a photo</b><span>worksheet, assignment page, test announcement</span></label>
     <div class="thumbs" id="thumbs">${S.photos.map((f,i) => `<div><img src="${URL.createObjectURL(f)}" alt=""><button data-rm="${i}" aria-label="remove photo">&times;</button></div>`).join("")}</div>
     <div class="or">or type it</div>
     <textarea id="paste" placeholder="bio worksheet on cell respiration due thursday. unit 4 test next tuesday.">${esc(S.draft||"")}</textarea>
     ${err ? `<div class="err">${esc(err)}</div>` : ""}
-    <button class="btn mt" id="read" data-act="read">${ico("spark", 18)}remember it</button>
-    <div class="or">or add it yourself</div>
+    <button class="btn mt" id="read" data-act="read">${ico("spark", 18)}${qm ? "read it & quiz me" : "remember it"}</button>
+    ${qm ? "" : `<div class="or">or add it yourself</div>
     <div class="kinds">
       <button class="btn light" data-act="add-kind" data-kind="hw">homework</button>
       <button class="btn light" data-act="add-kind" data-kind="test">test</button>
       <button class="btn light" data-act="add-kind" data-kind="event">date</button>
-    </div>
-    <div class="center mt"><button class="link" data-act="paper">try an example homework page</button></div>`);
+    </div>`}
+    <div class="center mt"><button class="link" data-act="paper" data-keep="1">try the example homework page</button></div>`);
 }
 function fields(i, k){
   const ev = isDate(i);
@@ -450,7 +510,7 @@ function foundSheet(manual){
   openSheet(`<div class="sheet-head"><h2>${manual ? `add a ${kindWord(F[0].kind)}` : F.length > 1 ? `found ${F.length} things!` : "look right?"}</h2><button class="link" data-act="close">close</button></div>
     <p class="muted" style="margin:0 0 12px">${manual ? "fill it in, then save." : "check the dates, then save."}</p>
     ${F.map((i,k) => `<div class="found">${fields(i,k)}${F.length>1?`<div class="center"><button class="link" data-rmfound="${k}">remove</button></div>`:""}</div>`).join("")}
-    <button class="btn" data-act="save-found">save${F.length > 1 ? " all" : ""}</button>`);
+    <button class="btn" data-act="save-found">${S.quizAfter ? `${ico("spark", 18)}save & quiz me` : `save${F.length > 1 ? " all" : ""}`}</button>`);
 }
 function editSheet(id){
   const i = S.items.find(x => x.id === id); if (!i) return;
@@ -492,7 +552,8 @@ async function startQuiz(id){
   quizSheet();
   try {
     const pick = o => ({kind:o.kind, title:o.title, subject:o.subject, topics:o.topics, notes:o.notes});
-    const r = await ai({task:"quiz", test: pick(t), related: related(t).slice(0,6).map(pick)});
+    // tests pull in the related homework; a single homework gets quizzed on just itself
+    const r = await ai({task:"quiz", test: pick(t), related: isTest(t) ? related(t).slice(0,6).map(pick) : []});
     const qs = (r.questions||[]).filter(q => q && q.q && Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(+q.answer) && +q.answer >= 0 && +q.answer < q.options.length).map(q => ({...q, answer:+q.answer}));
     if (!qs.length) throw new Error("couldn't make a quiz. add a few notes or topics first.");
     if (S.quiz && S.quiz.id === id) { S.quiz.qs = qs; quizSheet(); }
@@ -539,11 +600,11 @@ function demo(){
     mk({kind:"hw", title:"Unit circle practice #1-20", subject:"Precalc", due:d(2), topics:["Unit circle","Radians","Reference angles"], notes:"Radians = degrees × π/180. Unit circle point = (cos θ, sin θ). sin(π/6)=1/2, cos(π/6)=√3/2, sin(π/4)=cos(π/4)=√2/2, sin(π/3)=√3/2, cos(π/3)=1/2. Reference angle = acute angle to the x-axis. All Students Take Calculus: all positive QI, sin QII, tan QIII, cos QIV."}),
     mk({kind:"quiz", title:"Trig quiz", subject:"Precalc", due:d(4), topics:["Unit circle","Radians","Reference angles"], notes:"Unit circle values, degrees ↔ radians, signs by quadrant."}),
     mk({kind:"project", title:"Essay draft: The Outsiders", subject:"English", due:d(6), topics:["Theme","Thesis","Evidence"], notes:"Thesis about a theme (class divide, loyalty, growing up). 3 body paragraphs with quotes + analysis."}),
-    mk({kind:"hw", title:"Vocab list 7", subject:"English", due:d(0), topics:["Vocabulary"], notes:"10 vocab words with definitions and sentences."}),
+    mk({kind:"hw", title:"Vocab list 7", subject:"English", due:d(0), topics:["Vocabulary"], notes:"Write each word's definition and use it in a sentence. benevolent: kind and generous. candid: honest and direct. diligent: hardworking and careful. elated: very happy. futile: pointless, having no effect. meticulous: paying close attention to detail. ominous: suggesting something bad will happen. reluctant: unwilling, hesitant. tenacious: not giving up easily. vivid: bright, clear and detailed."}),
     mk({kind:"event", title:"Field trip: science museum", subject:"", due:d(1), notes:"Bring the signed permission slip and a lunch."}),
     mk({kind:"event", title:"No school (teacher work day)", subject:"", due:d(7), notes:""}),
   );
-  S.tab = "today"; save(); render(); window.scrollTo(0,0); toast("example week added. poke around!");
+  S.tab = "plans"; save(); render(); window.scrollTo(0,0); toast("example week added. poke around!");
 }
 
 /* ---------- events ---------- */
@@ -556,10 +617,11 @@ document.addEventListener("click", ev => {
   if (el.dataset.rmfound !== undefined) { S.found.splice(+el.dataset.rmfound, 1); return S.found.length ? foundSheet() : closeSheet(); }
   const row = el.closest("[data-id]"), id = el.dataset.id || (row && row.dataset.id), act = el.dataset.act;
   switch (act) {
-    case "add": S.photos = []; S.draft = ""; addSheet(); break;
+    case "add": S.quizAfter = false; S.photos = []; S.draft = ""; addSheet(); break;
+    case "quiz-new": S.quizAfter = true; S.photos = []; S.draft = ""; addSheet(); break;
     case "read": read(); break;
     case "add-kind": { const k = el.dataset.kind || "hw"; S.found = [clean({kind:k, due: ymd(addDays(t0(), k === "hw" ? 1 : 7))})]; foundSheet(true); break; }
-    case "paper": paperSheet(); break;
+    case "paper": S.quizAfter = el.dataset.quiz === "1" ? true : el.dataset.keep ? S.quizAfter : false; paperSheet(); break;
     case "paper-read": paperBlob().then(b => { S.photos = [b]; S.draft = ""; addSheet(); read(); }); break;
     case "close": closeSheet(); break;
     case "toggle": { const i = S.items.find(x => x.id === id); if (i) { i.done = !i.done; save(); render(); if (i.done) toast("done! nice work."); } break; }
@@ -570,7 +632,12 @@ document.addEventListener("click", ev => {
       const ok = S.found.filter(i => i.title.trim());
       if (!ok.length) return toast("give it a title first");
       ok.forEach(i => { i.title = i.title.trim(); i.subject = (i.subject||"").trim() || (isDate(i) ? "" : "Other"); S.items.push(i); });
-      save(); closeSheet(); S.found = null; S.photos = []; S.draft = ""; S.tab = "today"; render(); toast("saved. backpack's got it."); break;
+      const qm = S.quizAfter; S.quizAfter = false;
+      save(); closeSheet(); S.found = null; S.photos = []; S.draft = ""; window.scrollTo(0,0);
+      const first = ok.find(canQuiz);
+      if (qm && first) { S.tab = "quiz"; render(); startQuiz(first.id); break; }
+      S.tab = ok.some(i => !isTest(i) && !isDate(i)) ? "homework" : ok.some(isTest) ? "tests" : "plans";
+      render(); toast(S.tab === "homework" ? "saved! it's in your homework." : S.tab === "tests" ? "saved! it's in your tests." : "saved! it's in your plans."); break;
     }
     case "save-edit": { const e = S.editing, i = S.items.find(x => x.id === e.id); if (i) { Object.assign(i, {kind:e.kind, title:(e.title||"").trim()||i.title, subject:(e.subject||"").trim()||(isDate(e) ? "" : "Other"), due:e.due||null, topics:e.topics||[], notes:e.notes||""}); save(); render(); } closeSheet(); toast("saved"); break; }
     case "delete": if (el.dataset.sure) { S.items = S.items.filter(x => x.id !== id); delete S.quizzes[id]; save(); render(); closeSheet(); toast("deleted"); } else { el.dataset.sure = 1; el.textContent = "tap again to delete"; } break;
