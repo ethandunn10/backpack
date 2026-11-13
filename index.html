@@ -107,6 +107,8 @@
   @media(min-width:640px){.sheet-bg{align-items:center}.sheet{border-radius:26px;border-bottom:2px solid var(--line);box-shadow:0 6px 0 var(--line)}.sheet .grab{display:none}}
 
   .drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed var(--ink);background:var(--card);border-radius:20px;padding:24px 12px;cursor:pointer;text-align:center}
+  .drop.over{background:var(--sun-soft);border-style:solid}
+  .cam{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#0a1d10;border:2px solid var(--line);border-radius:18px;margin-bottom:10px}
   .drop b{font-size:17px;font-family:Fredoka,sans-serif;font-weight:600}
   .drop span{font-size:13.5px;color:var(--ink-3)}
   .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -475,12 +477,48 @@ function render(){
 
 /* ---------- sheets ---------- */
 function openSheet(html){ $("#sheet-body").innerHTML = html; $("#sheet").classList.add("show"); }
-function closeSheet(){ $("#sheet").classList.remove("show"); S.quiz = null; S.editing = null; }
+function closeSheet(){ stopCam(); $("#sheet").classList.remove("show"); S.quiz = null; S.editing = null; }
+
+/* ---------- getting photos in: file picker, drag & drop, pasted screenshots, webcam ---------- */
+function keepDraft(){ if ($("#paste")) S.draft = $("#paste").value; }
+function addPhotos(files){
+  keepDraft();
+  const imgs = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
+  if (!imgs.length) { toast("that isn't a photo"); return 0; }
+  const add = imgs.slice(0, Math.max(0, 3 - S.photos.length));
+  S.photos.push(...add); addSheet();
+  if (imgs.length > add.length) toast("up to 3 photos at a time");
+  return add.length;
+}
+function stopCam(){ if (S.stream) { S.stream.getTracks().forEach(t => t.stop()); S.stream = null; } }
+async function camSheet(){
+  keepDraft();
+  openSheet(`<div class="sheet-head"><h2>take a photo</h2><button class="link" data-act="cam-back">back</button></div>
+    <video id="cam" class="cam" autoplay playsinline muted></video>
+    <p class="muted" style="margin:0 0 12px">hold your worksheet up to the camera so it fills the box and the words are sharp.</p>
+    <button class="btn" data-act="snap">${ico("camera", 20)}take photo</button>`);
+  try {
+    stopCam();
+    S.stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: "environment", width: {ideal: 1920}, height: {ideal: 1440}}});
+    const v = $("#cam"); if (v) v.srcObject = S.stream; else stopCam();
+  } catch {
+    stopCam();
+    addSheet("couldn't open your camera. allow camera access for this site in your browser, then try again.");
+  }
+}
+function snap(){
+  const v = $("#cam");
+  if (!v || !v.videoWidth) return toast("camera's still warming up");
+  const c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext("2d").drawImage(v, 0, 0);
+  c.toBlob(b => { stopCam(); if (addPhotos([b])) toast("photo added"); }, "image/jpeg", 0.9);
+}
 
 function addSheet(err){
   const qm = S.quizAfter;
   openSheet(`<div class="sheet-head"><h2>${qm ? "quiz me on something new" : "add to your backpack"}</h2><button class="link" data-act="close">close</button></div>
-    <label class="drop" for="file">${ico("camera", 30, 2)}<b>snap or upload a photo</b><span>worksheet, assignment page, test announcement</span></label>
+    <label class="drop" for="file">${ico("paper", 30, 2)}<b>add a photo of your homework</b><span>click to pick a file, drag one here, or paste a screenshot (⌘V)</span></label>
+    ${navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? `<button class="btn light mt" data-act="cam">${ico("camera", 20)}take a photo with your camera</button>` : ""}
     <div class="thumbs" id="thumbs">${S.photos.map((f,i) => `<div><img src="${URL.createObjectURL(f)}" alt=""><button data-rm="${i}" aria-label="remove photo">&times;</button></div>`).join("")}</div>
     <div class="or">or type it</div>
     <textarea id="paste" placeholder="bio worksheet on cell respiration due thursday. unit 4 test next tuesday.">${esc(S.draft||"")}</textarea>
@@ -534,7 +572,10 @@ async function read(){
   const b = $("#read"); b.disabled = true; b.innerHTML = `<span class="spin"></span>reading…`;
   try {
     const images = [];
-    for (const f of S.photos) images.push({media_type:"image/jpeg", data: await toJpegB64(f)});
+    for (const f of S.photos) {
+      try { images.push({media_type:"image/jpeg", data: await toJpegB64(f)}); }
+      catch { throw new Error("couldn't open that photo. if it's an iPhone photo, try Safari, or take a screenshot of it and paste that instead."); }
+    }
     const t = t0();
     const r = await ai({task:"extract", text, images, today: ymd(t), weekday: wk(t)});
     const list = (r.items||[]).map(clean).filter(i => i.title);
@@ -622,6 +663,9 @@ document.addEventListener("click", ev => {
     case "read": read(); break;
     case "add-kind": { const k = el.dataset.kind || "hw"; S.found = [clean({kind:k, due: ymd(addDays(t0(), k === "hw" ? 1 : 7))})]; foundSheet(true); break; }
     case "paper": S.quizAfter = el.dataset.quiz === "1" ? true : el.dataset.keep ? S.quizAfter : false; paperSheet(); break;
+    case "cam": camSheet(); break;
+    case "snap": snap(); break;
+    case "cam-back": stopCam(); addSheet(); break;
     case "paper-read": paperBlob().then(b => { S.photos = [b]; S.draft = ""; addSheet(); read(); }); break;
     case "close": closeSheet(); break;
     case "toggle": { const i = S.items.find(x => x.id === id); if (i) { i.done = !i.done; save(); render(); if (i.done) toast("done! nice work."); } break; }
@@ -666,11 +710,18 @@ document.addEventListener("input", ev => {
 });
 document.addEventListener("change", ev => { if (ev.target.tagName === "SELECT" || ev.target.type === "date") ev.target.dispatchEvent(new Event("input", {bubbles:true})); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); if (e.key === "Enter" && e.target.id === "code") document.querySelector("[data-act=save-code]").click(); });
-$("#file").addEventListener("change", e => {
-  S.draft = $("#paste") ? $("#paste").value : S.draft;
-  const add = [...e.target.files].filter(f => f.type.startsWith("image/")).slice(0, Math.max(0, 3 - S.photos.length));
-  if (e.target.files.length > add.length) toast("up to 3 photos at a time");
-  S.photos.push(...add); e.target.value = ""; addSheet();
+$("#file").addEventListener("change", e => { const f = [...e.target.files]; e.target.value = ""; if (f.length) addPhotos(f); });
+// drag a picture anywhere onto the add sheet
+const addOpen = () => $("#sheet").classList.contains("show") && $(".drop");
+document.addEventListener("dragover", e => { if (!addOpen()) return; e.preventDefault(); $(".drop").classList.add("over"); });
+document.addEventListener("dragleave", e => { if (addOpen() && !e.relatedTarget) $(".drop").classList.remove("over"); });
+document.addEventListener("drop", e => { if (!addOpen()) return; e.preventDefault(); $(".drop").classList.remove("over"); addPhotos(e.dataTransfer.files); });
+// paste a copied screenshot (Cmd+Ctrl+Shift+4 on a Mac, then Cmd+V)
+document.addEventListener("paste", e => {
+  if (!addOpen()) return;
+  const f = [...((e.clipboardData && e.clipboardData.files) || [])].filter(x => x.type.startsWith("image/"));
+  if (!f.length) return;
+  e.preventDefault(); if (addPhotos(f)) toast("screenshot added");
 });
 
 load(); render();
